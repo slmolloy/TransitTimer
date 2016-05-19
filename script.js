@@ -1,9 +1,9 @@
 var map;
 var infoWindow;
+var portland = {lat: 45.519, lng: -122.679};
+var searchBound = .01;
 
 function initMap() {
-  var portland = {lat: 45.519, lng: -122.679};
-  var searchBound = .01;
   var defaultBounds = new google.maps.LatLngBounds(
     new google.maps.LatLng(portland.lat - searchBound, portland.lng - searchBound),
     new google.maps.LatLng(portland.lat + searchBound, portland.lng + searchBound));
@@ -62,8 +62,21 @@ function createMarker(place) {
     //service.getDetails(request, placeDetailsCallback);
     service.getDetails(request, function(place, status) {
       if (status == google.maps.places.PlacesServiceStatus.OK) {
-        infoWindow.setContent(place.name);
+        var lat = place.geometry.location.lat();
+        var lng = place.geometry.location.lng();
+        infoWindow.setContent(place.name + ' lat:' + lat + ' lng:' + lng);
         infoWindow.open(map, marker);
+
+        var directionsService = new google.maps.DirectionsService;
+        directionsService.route({
+          origin: new google.maps.LatLng(portland.lat, portland.lng),
+          destination: new google.maps.LatLng(portland.lat, portland.lng + .08),
+          travelMode: google.maps.TravelMode.TRANSIT
+        }, function(response, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            console.log(response);
+          }
+        })
       }
     });
   });
