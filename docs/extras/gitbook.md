@@ -17,10 +17,19 @@ Summary if you already have node:
 npm install gitbook-cli -g
 gitbook serve
 ```
+The serve command will start a local node server to host the documentation
+and any time the md files change the server is restarted with the new content
+and the web browser is also refreshed with the changes. Super nice!
+
+```bash
+gitbook build
+```
+The build command will build the GitBook documentation to be used as a static
+website to be easily hosted or viewed in environments without server side code
+capabilities.
+
 To use GitBook you'll need a SUMMARY.md in addition to the famous README.md.
-The summary file acts as the table of contents for your book. The
-```gitbook serve``` command will update the server and refresh the browser
-every time you save changes to your documentation. Nice!
+The summary file acts as the table of contents for your book.
 
 #GitBook Editor
 Grrr... I tried using this tool and lost half an hour of work.
