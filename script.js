@@ -87,9 +87,10 @@ function showArrivals(place, map, marker) {
     if (req.status >= 200 && req.status < 400) {
       var response = JSON.parse(req.responseText);
       var locationDesc;
-      for (var i = 0; i < response.resultSet.location.length; i++) {
-        if (response.resultSet.location[i].desc.includes(place.name)) {
-          var stop = response.resultSet.location[i];
+      var locations = response.resultSet.location;
+      for (var i = 0; i < locations.length; i++) {
+        if (locations[i].desc.includes(place.name)) {
+          var stop = locations[i];
           locationDesc = '<b>' + stop.desc + '</b>';
           locationDesc += '<br>locID=' + stop.locid;
           locationDesc += '<br>lat=' + lat;
