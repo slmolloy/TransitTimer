@@ -1,3 +1,7 @@
+// Replace this with your own app id
+// http://developer.trimet.org/
+TRIMET_APP_ID = '188EB70D57290068482857DDD';
+
 var map;
 var infoWindow;
 var portland = {lat: 45.519, lng: -122.679};
@@ -22,7 +26,7 @@ function initMap() {
   var mapDiv = document.getElementById('map-canvas');
   map = new google.maps.Map(mapDiv, {
     center: portland,
-    zoom: 19
+    zoom: 17
   });
 
   var input = document.getElementById('pac-input');
@@ -175,7 +179,7 @@ function buildArrivalsUrl(locid, numResults) {
 }
 
 function trimetParams() {
-  return 'appID=188EB70D57290068482857DDD&json=true'
+  return 'appID=' + TRIMET_APP_ID + '&json=true';
 }
 
 function padNum(value, totalSize) {
