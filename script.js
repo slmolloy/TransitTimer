@@ -58,16 +58,7 @@ function createMarker(place) {
   });
 
   google.maps.event.addListener(marker, 'click', function() {
-    var request = {
-      placeId: place.place_id
-    };
-    var service = new google.maps.places.PlacesService(map);
-
-    service.getDetails(request, function(place, status) {
-      if (status == google.maps.places.PlacesServiceStatus.OK) {
-        showArrivals(place, map, marker);
-      }
-    });
+    showArrivals(place, map, marker);
   });
 }
 
@@ -96,6 +87,7 @@ function showArrivals(place, map, marker) {
           locationDesc += '<br>lat=' + lat;
           locationDesc += '<br>lng=' + lng;
           getArrivals(stop, map, marker);
+          break;
         }
       }
       if (locationDesc === undefined) {
@@ -128,7 +120,6 @@ function getArrivals(stop, map, marker) {
       var response = JSON.parse(req.responseText);
       var arrivals = response.resultSet.arrival;
       var nowTime = new Date().getTime();
-      var timeDiff;
       var locationDesc = '';
       var arrivalMap = {};
       for (var i = 0; i < arrivals.length; i++) {
@@ -136,15 +127,8 @@ function getArrivals(stop, map, marker) {
           arrivalMap[arrivals[i].shortSign] = [];
         }
         if (arrivalMap[arrivals[i].shortSign].length < arrivalCount) {
-          timeDiff = arrivals[i].scheduled - nowTime;
-          timeDiff = Math.floor(timeDiff / 1000 / 60);
-          if (timeDiff <= minuteDisplayThreshold) {
-            arrivalMap[arrivals[i].shortSign].push(timeDiff + ' minutes');
-          } else {
-            var d = new Date(0);
-            d.setUTCMilliseconds(arrivals[i].scheduled);
-            arrivalMap[arrivals[i].shortSign].push(padNum(d.getHours(), 2) + ':' + padNum(d.getMinutes(), 2));
-          }
+          arrivalMap[arrivals[i].shortSign].push(getTimeDisplay(
+              nowTime, arrivals[i].scheduled, minuteDisplayThreshold));
         }
       }
       for (var key in arrivalMap) {
@@ -158,6 +142,21 @@ function getArrivals(stop, map, marker) {
     }
   });
   req.send(null);
+}
+
+function getTimeDisplay(current, scheduled, minuteDisplayThreshold) {
+  var timeDiff;
+
+  timeDiff = scheduled - current;
+  timeDiff = Math.floor(timeDiff / 1000 / 60);
+
+  if (timeDiff <= minuteDisplayThreshold) {
+    return timeDiff + ' minutes';
+  } else {
+    var d = new Date(0);
+    d.setUTCMilliseconds(scheduled);
+    return padNum(d.getHours(), 2) + ':' + padNum(d.getMinutes(), 2);
+  }
 }
 
 function buildStopsUrl(lat, lng, stopSearchRadius) {
